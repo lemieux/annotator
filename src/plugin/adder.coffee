@@ -1,5 +1,6 @@
 Widget = require('../widget')
 Util = require('../util')
+Range = require('xpath-range').Range
 $ = Util.$
 _t = Util.TranslationString
 
@@ -55,11 +56,24 @@ class Adder extends Widget
   #
   # Returns nothing.
   show: =>
-    if @core.interactionPoint?
+    r = this.selectedSkeleton.ranges[0];    
+
+    range = Range.sniff(r).normalize(this.annotator.element[0]).toRange()
+
+    clientRectange = range.getBoundingClientRect();
+
+    # Position the Adder close to the text if it was hidden
+    if @element.hasClass('annotator-hide')
       @element.css({
-        top: @core.interactionPoint.top,
-        left: @core.interactionPoint.left
+        top: clientRectange.top +  Util.getGlobal().pageYOffset + 10,
+        left: clientRectange.left + clientRectange.width / 2 + Util.getGlobal().pageXOffset
       })
+  
+    @element.animate({
+      top: clientRectange.top +  Util.getGlobal().pageYOffset,
+      left: clientRectange.left + clientRectange.width / 2 + Util.getGlobal().pageXOffset
+    }, 200)
+
     super
 
   # Event callback: called when the mouse button is depressed on the adder.
