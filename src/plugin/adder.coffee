@@ -61,18 +61,18 @@ class Adder extends Widget
     normedRange = Range.sniff(r).normalize(this.annotator.element[0])
     range = normedRange.toRange()
 
-    clientRectange = range.getBoundingClientRect();
+    clientRectangle = range.getBoundingClientRect();
 
     # Position the Adder close to the text if it was hidden
     if @element.hasClass('annotator-hide')
       @element.css({
-        top: clientRectange.top +  Util.getGlobal().scrollY + 10,
-        left: clientRectange.left + clientRectange.width / 2 + Util.getGlobal().scrollX
+        top: clientRectangle.top +  Util.getGlobal().scrollY + 10,
+        left: clientRectangle.left + clientRectangle.width / 2 + Util.getGlobal().scrollX
       })
   
     @element.animate({
-      top: clientRectange.top +  Util.getGlobal().scrollY,
-      left: clientRectange.left + clientRectange.width / 2 + Util.getGlobal().scrollX
+      top: clientRectangle.top +  Util.getGlobal().scrollY,
+      left: clientRectangle.left + clientRectangle.width / 2 + Util.getGlobal().scrollX
     }, 200)
 
     super
