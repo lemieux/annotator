@@ -58,20 +58,21 @@ class Adder extends Widget
   show: =>
     r = this.selectedSkeleton.ranges[0];    
 
-    range = Range.sniff(r).normalize(this.annotator.element[0]).toRange()
+    normedRange = Range.sniff(r).normalize(this.annotator.element[0])
+    range = normedRange.toRange()
 
     clientRectange = range.getBoundingClientRect();
 
     # Position the Adder close to the text if it was hidden
     if @element.hasClass('annotator-hide')
       @element.css({
-        top: clientRectange.top +  Util.getGlobal().pageYOffset + 10,
-        left: clientRectange.left + clientRectange.width / 2 + Util.getGlobal().pageXOffset
+        top: clientRectange.top +  Util.getGlobal().scrollY + 10,
+        left: clientRectange.left + clientRectange.width / 2 + Util.getGlobal().scrollX
       })
   
     @element.animate({
-      top: clientRectange.top +  Util.getGlobal().pageYOffset,
-      left: clientRectange.left + clientRectange.width / 2 + Util.getGlobal().pageXOffset
+      top: clientRectange.top +  Util.getGlobal().scrollY,
+      left: clientRectange.left + clientRectange.width / 2 + Util.getGlobal().scrollX
     }, 200)
 
     super
@@ -89,6 +90,7 @@ class Adder extends Widget
     event?.preventDefault()
     # Prevent the selection code from firing when the mouse button is released
     @ignoreMouseup = true
+    return
 
   # Event callback: called when the mouse button is released
   #
@@ -103,6 +105,8 @@ class Adder extends Widget
     # Prevent the selection code from firing when the ignoreMouseup flag is set
     if @ignoreMouseup
       event.stopImmediatePropagation()
+
+    return
 
 
   # Event callback: called when the adder is clicked. The click event is used as
