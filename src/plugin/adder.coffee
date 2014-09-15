@@ -1,5 +1,6 @@
 Widget = require('../widget')
 Util = require('../util')
+Range = require('xpath-range').Range
 $ = Util.$
 _t = Util.TranslationString
 
@@ -55,11 +56,25 @@ class Adder extends Widget
   #
   # Returns nothing.
   show: =>
-    if @core.interactionPoint?
+    r = this.selectedSkeleton.ranges[0];    
+
+    normedRange = Range.sniff(r).normalize(this.annotator.element[0])
+    range = normedRange.toRange()
+
+    clientRectangle = range.getBoundingClientRect();
+
+    # Position the Adder close to the text if it was hidden
+    if @element.hasClass('annotator-hide')
       @element.css({
-        top: @core.interactionPoint.top,
-        left: @core.interactionPoint.left
+        top: clientRectangle.top +  Util.getGlobal().scrollY + 10,
+        left: clientRectangle.left + clientRectangle.width / 2 + Util.getGlobal().scrollX
       })
+  
+    @element.animate({
+      top: clientRectangle.top +  Util.getGlobal().scrollY,
+      left: clientRectangle.left + clientRectangle.width / 2 + Util.getGlobal().scrollX
+    }, 200)
+
     super
 
   # Event callback: called when the mouse button is depressed on the adder.
@@ -75,6 +90,7 @@ class Adder extends Widget
     event?.preventDefault()
     # Prevent the selection code from firing when the mouse button is released
     @ignoreMouseup = true
+    return
 
   # Event callback: called when the mouse button is released
   #
@@ -89,6 +105,8 @@ class Adder extends Widget
     # Prevent the selection code from firing when the ignoreMouseup flag is set
     if @ignoreMouseup
       event.stopImmediatePropagation()
+
+    return
 
 
   # Event callback: called when the adder is clicked. The click event is used as
